@@ -16,7 +16,10 @@ router.post(
   asyncHandler(async (req, res) => {
     const response = await login(req.body);
 
-    return res.status(200).json(response);
+    res.cookie("token", response.token, { httpOnly: true, secure: true });
+    return res
+      .status(200)
+      .json({ id: response.id, username: response.username });
   })
 );
 
