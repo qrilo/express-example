@@ -33,6 +33,13 @@ router.post(
   })
 );
 
+router.post(
+  "/logout",
+  asyncHandler(async (req, res) => {
+    res.clearCookie("auth");
+  })
+);
+
 router.get(
   "/",
   verifyToken,
