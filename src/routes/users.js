@@ -6,7 +6,10 @@ const {
   registerScheme,
 } = require("../validations/user-validations");
 const { login, register } = require("../services/users-service");
-const { verifyToken } = require("../middlewares/authenticate-middleware");
+const {
+  authenticate,
+  authorize,
+} = require("../middlewares/authenticate-middleware");
 
 const router = express.Router();
 
@@ -32,9 +35,17 @@ router.post(
 
 router.get(
   "/",
-  verifyToken,
+  authenticate,
   asyncHandler(async (req, res) => {
     return res.status(200).json({ id: req.token.userId, status: "ok" });
+  })
+);
+
+router.get(
+  "/admin",
+  authorize(["admin"]),
+  asyncHandler(async (req, res) => {
+    return res.status(200).json({ info: "it's admin" });
   })
 );
 

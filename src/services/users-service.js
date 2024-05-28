@@ -17,10 +17,10 @@ const login = async (values) => {
   }
 
   const accessToken = jwt.sign(
-    { userId: user.id, role: user.role },
+    { userId: user.id, role: "user" },
     process.env.SECRET_KEY,
     {
-      expiresIn: "1h",
+      expiresIn: "2h",
     }
   );
 

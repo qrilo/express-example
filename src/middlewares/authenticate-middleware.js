@@ -1,7 +1,8 @@
 const jwt = require("jsonwebtoken");
 const UnauthorizedError = require("../errors/unauthorized-error");
+const ForbiddenError = require("../errors/forbidden-error");
 
-function verifyToken(req, res, next) {
+const authenticate = (req, res, next) => {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
 
@@ -17,8 +18,37 @@ function verifyToken(req, res, next) {
 
     next();
   });
-}
+};
+
+const authorize = (requiredRoles) => {
+  return async (req, res, next) => {
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
+
+    if (!token) {
+      return next(new UnauthorizedError({ error: "Access token is required" }));
+    }
+
+    jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
+      if (err) {
+        return next(new UnauthorizedError({ error: "Invalid access token" }));
+      }
+
+      req.token = decoded;
+      const hasRequiredRole = requiredRoles.some((role) =>
+        req.token.role.includes(role)
+      );
+
+      if (!hasRequiredRole) {
+        return next(new ForbiddenError({ error: "Access denied" }));
+      }
+
+      next();
+    });
+  };
+};
 
 module.exports = {
-  verifyToken,
+  authenticate,
+  authorize,
 };
