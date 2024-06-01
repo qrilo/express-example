@@ -2,7 +2,7 @@
   "development": {
     "username": "postgres",
     "password": "qwerty78",
-    "database": "testDB",
+    "database": "expressAppDB",
     "host": "localhost",
     "dialect": "postgres",
     "port": 5432

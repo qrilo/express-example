@@ -17,7 +17,7 @@ const login = async (values) => {
   }
 
   const accessToken = jwt.sign(
-    { userId: user.id, role: "user" },
+    { userId: user.id, username: user.username },
     process.env.SECRET_KEY,
     {
       expiresIn: "2h",
