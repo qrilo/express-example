@@ -28,7 +28,15 @@ const registerScheme = Joi.object({
   }),
 });
 
+const refreshTokenScheme = Joi.object({
+  refreshToken: Joi.string().required().messages({
+    "any.required": "Refresh token обязателен",
+    "string.empty": "Refresh token не может быть пустым",
+  }),
+});
+
 module.exports = {
   loginScheme,
   registerScheme,
+  refreshTokenScheme,
 };

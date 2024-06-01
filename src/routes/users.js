@@ -4,8 +4,9 @@ const validate = require("../middlewares/validate-middleware");
 const {
   loginScheme,
   registerScheme,
+  refreshTokenScheme,
 } = require("../validations/user-validations");
-const { login, register } = require("../services/users-service");
+const { login, register, refreshTokens } = require("../services/users-service");
 const {
   authenticate,
   authorize,
@@ -46,6 +47,15 @@ router.get(
   authorize(["admin"]),
   asyncHandler(async (req, res) => {
     return res.status(200).json({ info: "it's admin" });
+  })
+);
+
+router.post(
+  "/refresh-token",
+  validate(refreshTokenScheme),
+  asyncHandler(async (req, res) => {
+    const response = await refreshTokens(req.body.refreshToken);
+    return res.status(200).json(response);
   })
 );
 

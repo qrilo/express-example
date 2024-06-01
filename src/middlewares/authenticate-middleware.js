@@ -10,7 +10,7 @@ const authenticate = (req, res, next) => {
     throw new UnauthorizedError({ error: "Access token is required" });
   }
 
-  jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
     if (err) {
       throw new UnauthorizedError({ error: "Invalid access token" });
     }
@@ -29,15 +29,15 @@ const authorize = (requiredRoles) => {
       return next(new UnauthorizedError({ error: "Access token is required" }));
     }
 
-    jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
       if (err) {
         return next(new UnauthorizedError({ error: "Invalid access token" }));
       }
 
       req.token = decoded;
-      const hasRequiredRole = requiredRoles.some((role) =>
-        req.token.role.includes(role)
-      );
+      const hasRequiredRole =
+        req.token.role &&
+        requiredRoles.some((role) => req.token.role.includes(role));
 
       if (!hasRequiredRole) {
         return next(new ForbiddenError({ error: "Access denied" }));
