@@ -4,6 +4,7 @@ const db = require("../models");
 const ValidationError = require("../errors/validation-error");
 const UnauthorizedError = require("../errors/unauthorized-error");
 const NotFoundError = require("../errors/not-found-error");
+const logger = require("../utils/logger");
 
 const login = async (values) => {
   const user = await db.User.findOne({
@@ -77,16 +78,7 @@ const refreshTokens = async (oldRefreshToken) => {
 
     const user = await db.User.findByPk(decoded.userId);
 
-    if (!user) {
-      throw new NotFoundError({ error: "User not found" });
-    }
-
     const token = await db.RefreshToken.findByPk(decoded.id);
-
-    if (!token) {
-      throw new NotFoundError({ error: "Refresh token not found" });
-    }
-
     await token.destroy();
 
     const { accessToken, refreshToken } = await generateTokens(user);
